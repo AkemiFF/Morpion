@@ -16,6 +16,10 @@ export const getBestMove = (board: Board, computerSymbol: Player, playerSymbol: 
   const blockMove = findWinningMove(board, playerSymbol);
   if (blockMove !== -1) return blockMove;
 
+  // Rule 2.1: Check for double threat and block it
+  const doubleThreatMove = findDoubleThreatMove(board, playerSymbol);
+  if (doubleThreatMove !== -1) return doubleThreatMove;
+
   // Rule 3: Take center if open
   if (board[4] === null) return 4;
 
@@ -23,9 +27,9 @@ export const getBestMove = (board: Board, computerSymbol: Player, playerSymbol: 
   const oppositeCornerMove = takeOppositeCorner(board, playerSymbol);
   if (oppositeCornerMove !== -1) return oppositeCornerMove;
 
-  // Rule 5: Block double threat
-  const blockDoubleThreatMove = blockDoubleThreat(board, playerSymbol);
-  if (blockDoubleThreatMove !== -1) return blockDoubleThreatMove;
+  // // Rule 5: Block double threat
+  // const blockDoubleThreatMove = blockDoubleThreat(board, playerSymbol);
+  // if (blockDoubleThreatMove !== -1) return blockDoubleThreatMove;
 
   // Rule 6: Take any open corner
   const cornerMove = takeOpenCorner(board);
@@ -55,6 +59,7 @@ const takeOppositeCorner = (board: Board, playerSymbol: Player): number => {
   return -1;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const blockDoubleThreat = (board: Board, playerSymbol: Player): number => {
   const edges = [1, 3, 5, 7];
   if ((board[0] === playerSymbol && board[8] === playerSymbol) ||
@@ -79,3 +84,26 @@ export const checkWinner = (board: Board): Player | 'draw' | null => {
   return board.every(cell => cell !== null) ? 'draw' : null;
 };
 
+
+const findDoubleThreatMove = (board: Board, playerSymbol: Player): number => {
+  // Check each empty spot to see if it creates multiple winning threats
+  for (let i = 0; i < board.length; i++) {
+    if (board[i] === null) {
+      const simulatedBoard = [...board];
+      simulatedBoard[i] = playerSymbol;
+      let threatCount = 0;
+      for (const combination of winningCombinations) {
+        const [a, b, c] = combination;
+        if (
+          (simulatedBoard[a] === playerSymbol && simulatedBoard[b] === playerSymbol && simulatedBoard[c] === null) ||
+          (simulatedBoard[a] === playerSymbol && simulatedBoard[c] === playerSymbol && simulatedBoard[b] === null) ||
+          (simulatedBoard[b] === playerSymbol && simulatedBoard[c] === playerSymbol && simulatedBoard[a] === null)
+        ) {
+          threatCount++;
+        }
+      }
+      if (threatCount > 1) return i; // Block the move creating double threat
+    }
+  }
+  return -1;
+};
