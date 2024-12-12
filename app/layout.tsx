@@ -15,7 +15,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "JavaIDE Learning",
+  title: "Morpion AKE",
   description: "Welcome",
 };
 

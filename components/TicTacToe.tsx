@@ -169,7 +169,7 @@ const TicTacToe: React.FC<TicTacToeProps> = ({ initialPlayerSymbol }) => {
           Recommencer
         </Button>
       </motion.div>
-      <h6 className="bg-cyan-500 text-white text-sm">@by BradAke</h6>
+      <h6 className=" text-white text-sm">@by BradAke</h6>
     </div>
 
   );
